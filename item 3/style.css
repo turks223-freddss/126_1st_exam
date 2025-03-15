@@ -1,0 +1,209 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4efef;
+}
+
+header {
+    background-color: #ffcc66;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+p {
+    font-size: 1.2em;
+    color: #333;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #444;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #d35400;
+}
+
+#intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Container for text and image */
+.intro-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Text on the left */
+.intro-text {
+    width: 45%;
+    text-align: left;
+}
+
+/* Image on the right */
+.intro-image {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
+
+.intro-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+#ingredients {
+    max-width: 60%;
+    margin: 20px auto;
+    text-align: left;
+}
+
+#ingredients h2 {
+    font-size: 1.8em;
+    color: #333;
+}
+
+#ingredients ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    font-size: 1.2em;
+    color: #444;
+}
+
+#steps {
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+    position: relative;
+}
+
+/* Step Cards */
+.step-card {
+    width: 80%;
+    max-width: 1000px; /* Prevents it from getting too large */
+    height: 600px; /* Or set a fixed height like 400px */
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: rotateY(90deg);
+    transition: opacity 0.5s, transform 0.5s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Show active step */
+.step-card:target {
+    opacity: 1;
+    transform: rotateY(0deg);
+}
+#step1 {
+    opacity: 1;
+    transform: rotateY(0deg);
+    position: relative;
+}
+
+/* Image styling */
+.step-card img {
+    width: 80%;
+    max-height: 500px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+/* Navigation Buttons */
+.prev, .next, .restart {
+    display: inline-block;
+    margin: 10px;
+    padding: 8px 15px;
+    background: #ffcc66;
+    text-decoration: none;
+    border-radius: 5px;
+    color: #333;
+    font-weight: bold;
+    transition: transform 0.5s, background 0.3s;
+}
+
+/* Hover effect */
+.prev:hover, .next:hover, .restart:hover {
+    background: #ff9933;
+}
+
+/* Rotation animation */
+.prev {
+    transform: rotateY(-10deg);
+}
+.next {
+    transform: rotateY(10deg);
+}
+.restart {
+    transform: rotateY(360deg);
+}
+
+/*new*/
+
+.step-card:focus {
+    outline: 3px solid orange; /* Clear focus indication */
+}
+
+.prev:focus, .next:focus, .restart:focus {
+    outline: 3px solid blue;
+    background: #ff9933; /* Brighter background for visibility */
+}
+
+.step-card:focus-within {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8); /* Orange glow */
+}
+
+/* new */
+
+header:focus {
+    outline: 3px solid orange;
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+}
+
+nav a:focus {
+    outline: 3px solid blue;
+    background: #ffcc66; /* Slight highlight */
+}
+
+
+section:focus {
+    outline: 3px solid #ff9933; /* Orange border to indicate focus */
+    box-shadow: 0 0 10px rgba(255, 153, 51, 0.8);
+    transition: outline 0.2s ease-in-out;
+}
