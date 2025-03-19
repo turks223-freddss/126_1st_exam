@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Khand:wght@300;500;700&family=Saira:wght@400;700&display=swap');
+        
+		@media screen and (max-width: 600px) {
+			.tab-box {
+				max-width: 50px; /* Smaller max width */
+			}
+			
+			.user {
+				max-width: 50px; /* Make it even smaller */
+			}
+			
+			.personalization{
+				display: none;
+			}
+		}
+		
+		@media (max-width: 768px) {
+			.card {
+				flex-direction: column; /* Stack the elements vertically */
+			}
+		}
+		
+        body {
+            margin: 0;
+            font-family: "OCR-B", sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* Prevents page extension */
+        }
+        .header {
+            display: flex;
+            justify-content: left;
+            align-items: flex-end;
+            background: #dbecfe;
+            color: white;
+            padding: 0px 20px;
+            width: auto;
+            position: relative;
+            height: 55px;
+        }
+        .header img {
+            width: 100%;           /* Ensures the image fills the width of its container */
+			height: auto;          /* Adjusts the height automatically to maintain the aspect ratio */
+			max-width: 30px;       /* Limits the maximum width to 50px to prevent it from becoming too large */
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: left;
+			align-items: flex-end;
+            gap: 4px;
+            background: #eceef0;
+            padding: 10px;
+            width: 100%; /* Ensure full width over entire viewport */
+            box-sizing: border-box;
+            position: relative;
+            margin-bottom: 0; /* Remove any space below */
+			height: 45px;
+			flex-wrap: wrap;
+			box-shadow: 0px -4px 7px 3px rgba(0, 0, 0, 0.15);
+			border: 1px solid black;
+			box-shadow: inset 0px -4px 4px 1px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tab-box {
+            position: absolute;
+            top: -31px; /* Slightly lowered to blend better */
+			right: 4%;
+            background: #eceef0;
+            color: black;
+            padding: 8px;
+            border-radius: 3px 3px 0 0;
+			border: .7px solid black;
+			border-bottom: none;
+            box-shadow: none;
+            font-weight: bold;
+			box-shadow: 0px -8px 7px 3px rgba(0, 0, 0, 0.1);
+			min-width: fit-content; /* Ensure button only takes necessary space */
+			max-width: 100px; /* Prevent buttons from being too wide */
+			flex-shrink: 1; /* Allows buttons to shrink when needed */
+			white-space: nowrap;
+			overflow: hidden;
+			font-size: .8rem;
+			text-overflow: ellipsis;
+        }
+	
+        .nav-buttons-container button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+            background: #eceef0;
+            color: #4e6896;
+			font-weight: bold;
+            border-radius: 5px 5px 0 0;
+            //padding: 8px 12px; /* Reduce padding */
+            cursor: pointer;
+            transition: 0.3s;
+			min-width: fit-content; /* Ensure button only takes necessary space */
+			max-width: 100px; /* Prevent buttons from being too wide */
+			flex-shrink: 1; /* Allows buttons to shrink when needed */
+			white-space: nowrap;
+			transition: box-shadow 0.3s ease-in-out;
+			border-bottom: none; 
+			box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.4);
+			font-size: max(1vw, 8px); /* Adjust font size but prevent it from becoming too small */
+			padding: 0.5vh 1vw; /* Make button padding responsive */
+			min-width: 6vw; /* Prevent buttons from being too small */
+			max-width: 12vw; /* Prevent buttons from being too large */
+			height: 32px; /* Keep height fixed */
+			line-height: 45px; /* Ensures text stays vertically centered */
+        }
+		
+        .nav-buttons button:hover {
+            box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
+			transform: translateY(-1px); /* Slight lift effect */
+			color:#d3615c;
+        }
+        .main {
+            display: flex;
+            flex: 1;
+            margin-top: 0; /* Remove space between header and content */
+            overflow: hidden; /* Prevents unwanted scrolling */
+        }
+        .sidebar {
+            width: 9.33%; /* 1/12 of the width */
+			min-width: 120px;
+            background: #eef8fe;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+			margin:0;
+            position: absolute;
+            top: 70px; /* Keeps space from header */
+            left: 0;
+            bottom: 0;
+            z-index: 10;
+			transform: translateX(0);
+            transition: transform 0.3s ease-in-out;
+			border: 1px solid black;
+			box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.7);
+			overflow-y: visible;
+        }
+		
+		
+        .menu-item {
+			padding: 4px; /* Adds spacing inside */
+			box-sizing: border-box; /* Ensures padding doesn’t affect width */
+			margin:0px;
+            display: flex;
+			width: 100%;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+			font-size: .7rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .menu-item:hover {
+            background: #d0e0f0;
+        }
+        .menu-item img {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+        }
+		
+		.menu-item.active {
+			background: #fdfffd;
+			color: orange; 
+		}
+		
+		.more {
+            padding: 8px;
+            color: blue;
+			font-size: .7rem;
+            cursor: pointer;
+        }
+        .ad-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .ad-section img {
+            width: 100%;
+            max-width: 200px;
+        }
+		
+        .content-wrapper {
+            display: grid;
+			grid-template-columns: 1fr 1fr; 
+            margin-left: 1.5%; /* Prevents content from being overlapped by sidebar */
+            position: relative;
+            z-index: 1;
+            width: 100%; /* Adjusted to remove extra space */
+			transition: margin-left 0.3s ease-in-out;
+        }
+		
+        .left-content {
+			flex: 1;
+			background: white;
+			display: flex;            /* Enables flex layout */
+			flex-direction: column;   /* Stack items vertically */
+			overflow-y: scroll;         /* Enable vertical scrolling */
+			gap: 0px;                 /* No gap between items */
+			color: white;
+			padding: 0px;
+			min-width:30px;
+			transition: margin-left 0.3s ease-in-out; /* Smooth transition */
+		}
+		
+        .right-content {
+            flex: 1;
+            background: #aaa;
+            color: white;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .inner-container {
+            background: #eceef0;
+            padding: 15px;
+            margin: 0;
+            width: 100%;
+            min-height: 13%; /* Use min-height to allow growth, preventing overflow */
+            color: white;
+			box-shadow: 0px -4px 6px 3px rgba(0, 0, 0, 0.4);
+            border-radius: 0;
+            position: relative;
+        }
+        .bottom-container {
+            background: #eceef0;
+            margin: 0;
+            width: 100%;
+            flex: 1;
+            color: black;
+            border-radius: 3;
+			border: .2px solid gray;
+			box-shadow: 0px -4px 12px 3px rgba(0, 0, 0, 1);
+        }
+        .triangle {
+            position: absolute;
+			color: #eceef0;
+            bottom: -14px;
+            right: 5%;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 15px solid #eceef0;
+			filter: drop-shadow(10px 4px 5px rgba(0, 0, 0, 0.3)); 
+			z-index: 10;
+        }
+		
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Saira', sans-serif;
+            color: black;
+            margin-top: 12px;
+			align-self: flex-end;
+        }
+		.nav-buttons-container
+		{
+			display: flex;
+            justify-content: left;
+			align-items: flex-end;
+			margin-left: 3%;
+			gap: 4px;
+			position: absolute;
+			top:13px;
+			transition: margin-left 0.3s ease-in-out;
+			z-index: 9; /* Ensures it stays on top */
+		}
+		
+		.sidebar.hidden {
+			transform: translateX(-80%);
+		}
+		
+		.toggle-btn {
+			position: absolute;
+			top: 0%;
+			left: 78%;
+			background: none;
+			color: black;
+			border: none;
+			margin-left:12px;
+			margin-top:2px;
+			padding: 0px;
+			cursor: pointer;
+			font-size: 10px;
+			border-radius: 5px;
+			z-index: 3;
+			font-weight:bold;
+		}
+		.toggle-btn:hover{
+			background: orange;
+		}
+		
+		.content-wrapper.shifted {
+			margin-left: 8%; /* Same width as the sidebar */
+		}
+		
+		.nav-buttons-container.shifted {
+			margin-left: 11%; /* Same as sidebar width */
+		}
+		
+		.nav-buttons button.active {
+			color: #d3615c; /* Change font color */
+			background: #fcfbfc; /* Optional: Highlight the button */
+			border-bottom: 2px solid #eceef0; 
+		}
+		
+		.user{
+			font-size: .6rem;
+			white-space: nowrap;
+			overflow: hidden;
+			max-width: 80px; /* Adjust as needed */
+			text-overflow: ellipsis;
+		}
+		.tab-link {
+			font-size: .6rem;
+			color: #5051ba; /* Match the text color */
+			text-decoration: none !important; /* Remove underline */
+			font-weight: bold;
+			transition: color 0.3s ease-in-out;
+		}
+		
+		.tab-link:hover {
+			color: #d56661;
+		}
+		
+		.personalization
+		{
+			display: flex;
+            justify-content: left;
+			align-items: flex-end;
+			margin-left: 3%;
+			gap: 4px;
+			position: absolute;
+			right:3%;
+			top:13px;
+		}
+		.searchbar{
+			display: flex;
+            justify-content: left;
+			align-items: flex-end;
+		}
+		
+		.searchbar button{
+			border: 1px solid gray;
+			border-radius: 2px;
+		}
+		
+		.search-bar {
+			height: 20px; /* Keeps height aligned with buttons */
+			font-size: 0.9rem;
+			border: 1px solid #ccc;
+			border-radius: 2px;
+			outline: none;
+			width: 150px; /* Adjust width as needed */
+			transition: width 0.3s ease-in-out;
+		}
+		
+		.card {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			background: #f9f9f9;
+			border: 1px solid #ccc;
+			padding: 0px 28px;
+			width: 100%;
+			box-sizing: border-box; /* Prevents extra width from padding */
+			margin: 0; /* Remove any spacing */
+			box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+			border-top: 1px solid gray;
+			border-bottom: 1px solid gray;
+		}
+
+		/* Card Number */
+		.card-number {
+			font-size: 1rem;
+			font-weight: bold;
+			margin-right: 10px;
+			color: #c4c4c4;
+		}
+
+		/* Vote Buttons */
+		.vote-buttons {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-right: 10px;
+			height:80px;
+			margin:0;
+		}
+
+		.vote-buttons button {
+			border: none;
+			color: #c4c4c4;
+			background: none;
+			font-size: 1.5rem;
+			cursor: pointer;
+            height: 40px; /* Set height of the button */
+            border: none;
+            background: none;
+			margin:0;
+			position:relative;
+		}
+		
+		.vote-buttons .downvote { 
+			margin-top: -12px;
+		}
+		
+		.vote-buttons .upvote {
+			margin-bottom: -12px; /* Move upvote button closer to downvote (or overlap) */
+		}
+
+		.vote-buttons .vote-count {
+			font-size: 1rem;
+			font-weight: bold;
+			color: #c4c4c4;
+		}
+
+		/* Card Image */
+		.card-image img {
+			width: 80px;
+			height: 60px;
+			object-fit: cover;
+			border-radius: 5px;
+			margin-right: 10px;
+			
+		}
+
+		.card-text {
+			font-size: 0.8rem;
+			font-family: "OCR-B", sans-serif;
+			margin:0;
+			flex-grow: 1; /* Ensures it grows as needed */
+		}
+
+		/* Card Title */
+		.card-text h3 {
+			margin-bottom:0px;
+			color:#470599;
+			margin: 0;
+			word-wrap: break-word; /* Allow long words to break and avoid overflow */
+			flex-grow: 1;          /* Ensure <h3> takes up available space */
+			white-space: normal;   /* Allow text to wrap onto the next line */
+			cursor: pointer;
+		}
+		
+		.card-text h3:hover {
+			color: #d56661;
+		}
+
+		/* Submitted on text */
+		.submitted-on {
+			display: inline;
+			color: gray;
+			margin: 0;
+		}
+		
+		.card-buttons button {
+			margin-left:10px;
+			background: none;         /* Remove background */
+			color: #827a74;           /* Blue text color */
+			border: none;             /* Remove border */
+			padding: 0;               /* Remove padding */
+			font-size: .6rem;          /* Set font size */
+			cursor: pointer;         /* Pointer cursor */
+			font-weight: bold;
+			transition: color 0.3s, text-decoration 0.3s; /* Add smooth transition */
+		}
+		
+		.card-buttons button:hover{
+			text-decoration: underline;
+		}
+		
+		.card-buttons .comment-btn {
+			margin-left:0px;
+		}
+
+		.inline-container {
+			display: flex;          /* Use flexbox to align items horizontally */
+			align-items: center;    /* Align items vertically in the center */
+			flex-wrap: wrap;        /* Allow items to wrap when the container is too small */
+			width: 100%;            /* Ensure container uses available space */
+			box-sizing: border-box; /* Ensure padding and border are accounted for in width */
+		}
+
+		.inline-container h3,
+		{
+			margin: 0; /* Remove default margins */
+			padding: 0; /* Optional: remove padding if you want it tight */
+			display: flex;          /* Use flexbox to align items horizontally */
+			align-items: center;
+			cursor: pointer; 
+			min-width: 0;
+		}
+		
+		.inline-container a {
+			padding: 0;
+			margin-left: 10px;
+			margin-bottom: 0px;
+			margin-top: 0px;
+			display: inline-block; /* Ensure 'a' behaves like inline-block */
+			font-size: .6rem;
+		}
+		
+		.title-source {
+			color: #b3b3b3;
+			text-decoration: none;
+		}
+		
+		.title-source:hover {
+			text-decoration: underline;
+		}
+		
+		.upvote.active {
+			color: orange;  /* Active button color */
+		}
+		
+		.downvote.active {
+			color: blue;
+		}
+		.vote-count.upvoted {
+			color: orange;  /* Color for vote count when upvoted */
+		}
+
+		/* For the vote count when downvoted */
+		.vote-count.downvoted {
+			color: blue;  /* Color for vote count when downvoted */
+		}
+		
+		.card.active {
+			background-color: #fef3f0;  
+		}
+		
+		.post_right {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: flex-start;
+			width: 95%;
+			height: auto; 
+			background:transparent;
+			font-family: Arial, sans-serif;
+			padding: 10px;
+			position: relative;
+			box-sizing: border-box;
+		}
+
+		.header_post_right {
+			font-size: 20px;
+			font-weight: bold;
+			color: #4b0082; /* Purple color */
+			display: flex;
+			align-items: baseline;
+			word-wrap: break-word; /* Prevent text from overflowing */
+			white-space: normal; /* Ensure the text wraps when needed */
+		}	
+
+		.source_post_right {
+			font-size: 12px;
+			color: gray;
+			margin-left: 5px;
+		}
+
+		.image-link_post_right {
+			font-size: 12px;
+			margin-top: 3px;
+		}
+
+		.image-link_post_right a {
+			color: #9f9f9f;
+			text-decoration: none;
+		}
+
+		.image-link_post_right a:hover {
+			text-decoration: underline;
+		}
+
+		.post_right_bottom_container {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between; /* Ensures metadata stays on the right */
+			align-items: flex-end;
+			height: auto; /* Adjust height for responsive behavior */
+			background: transparent;
+			width: 100%;
+			position: relative;
+			box-sizing: border-box; /* Prevent overflow */
+			
+			
+		}
+
+		.post_right_bottom_points_container {
+			display: flex;
+			flex-direction: row;
+			background: white; /* White background for points and votes */
+			align-items: center;
+			justify-content: space-between;
+			padding: 10px;
+			height:40% ;
+			width: 40%;
+			position: relative;
+			margin-top: 10px;
+		}
+
+		.points_post_right {
+			font-size: 18px;
+			font-weight: bold;
+			color: #666;
+		}
+
+		.points_post_right span {
+			font-size: 12px;
+			color: #666;
+		}
+
+		.votes_post_right {
+			display: flex;
+			flex-direction: column;
+			font-size: 14px;
+		}
+
+		.upvotes {
+			color: #ce5f60;
+			font-weight: bold;
+		}
+
+		.downvotes {
+			color: #b0c5dd;
+			font-weight: bold;
+			margin-top: 3px;
+		}
+
+		.post_right_bottom_metadata_container {
+			display: flex;
+			flex-direction: column;
+			font-size: 13px;
+			color: #666;
+			text-align: left; /* Aligns text to the right */
+			gap: 5px;
+		}
+		.post_comments{
+			display: flex;
+			flex-direction: row;
+			gap: 17px;
+		}
+		.post_comment_count{
+			font-size: 13px;
+		}
+		.post_sort_by{
+			font-size: 13px;
+			cursor: pointer;
+		}
+
+		.post_sort_by:hover{
+			color:#000000 !important
+		}
+
+		.submit-box {
+			background: #d6e3fa;
+			border: 1px solid #ccd7e0;
+			padding: 3px;
+			margin: 0px;
+			margin-top: 5px;
+			text-align: left;
+			font-size: 0.8rem;
+			box-shadow: none;
+			width: 90%; /* Ensures it spans the full sidebar width */
+			box-sizing: border-box; /* Prevents padding from affecting width */
+		}
+
+		.submit-link {
+			color: #0044cc;
+			text-decoration: none;
+			font-weight: bold;
+		}
+
+		.submit-link:hover {
+			text-decoration: underline;
+		}
+
+		.submit-description {
+			color: #555;
+			font-size: 0.75rem;
+			margin-top: 5px;
+		}
+		
+		.more:hover {
+			text-decoration: underline;
+		}
+		
+		.sidebar img{
+			display: block; /* Ensures the image behaves like a block element */
+			margin: 0; /* Centers the image horizontally */
+			padding: 3px;
+			height: auto;
+			width: 70%;
+		}
+
+
+		/*comment*/
+		.comment-wrapper {
+			position: relative;
+			width: 100%;       /* Set a fixed width */
+			max-height: 80vh;   /* Prevent overflow */
+			overflow-y: auto;   /* Enable scrolling */
+			background: #eceef0;
+			margin: 0;
+		}
+		
+		.comment {
+			display: flex;
+			flex-direction: column; /* Stack replies under parent */
+			background: #eceef0;
+			padding: 10px;
+			border-radius: 5px;
+			font-size: .6rem
+			margin-bottom: 10px;
+			position: relative; /* Allow normal flow positioning */
+			margin-left:20px;
+		}
+		
+		.comment-content {
+			/*margin-left: 75px; /* Adjust this value as needed */
+			flex: 1;
+		}
+		
+		.nested {
+			margin-left: 20px;
+			display: flex;
+			flex-direction: column;
+			position: relative;
+		}
+		.nested::before {
+			content: "";
+			position: absolute;
+			left: -30px;
+			top: 0;
+			bottom: 0;
+			width: 2px;
+			background-color: gray;
+		}
+		.comment-header {
+			display: flex;
+			align-items: center;
+		}
+		.username {
+			color: #0079d3;
+			font-weight: bold;
+			font-size: .8rem;
+			cursor:pointer;
+		}
+		.username:hover{
+			color: #d56661;
+		}
+		.metadata {
+			color: gray;
+			font-size: 0.9em;
+			margin-left: 10px;
+		}
+		.comment-text {
+			margin-top: 5px;
+			color:#333
+		}
+		.actions {
+			margin-top: 10px;
+			font-size: 0.9em;
+			color: gray;
+		}
+		
+		
+		
+		
+		.comment-box {
+			display: flex;
+			align-items: center;
+			margin-top: 20px;
+			margin-left: 20px;
+			max-width: 600px;
+		}
+		.comment-box textarea {
+			flex: 1;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			resize: none;
+		}
+		.comment-box button {
+			margin-left: 10px;
+			padding: 10px 15px;
+			border: none;
+			background-color: #0079d3;
+			color: white;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		.formatting-help {
+			margin-top:5px;
+			font-size: 0.8em;
+			color: gray;
+			text-align: right;
+			max-width: 600px;
+			cursor:pointer;
+			margin-bottom: 20px;
+		}
+		
+		.help {
+			margin-left: 10px;
+		}
+		
+		.vote-section {
+			display: flex;
+			flex-direction: column; /* Stack upvote, score, and downvote vertically */
+			align-items: left; 
+			justify-content: left;
+			/*margin-right: 600px; /* Space between vote section and comment */
+		}
+		
+		.vote-button {
+			background: none;
+			border: none;
+			font-size: 14px;
+			cursor: pointer;
+		}
+		
+		.upvote {
+			color: #ff4500; /* Reddit upvote color */
+		}
+		
+		.downvote {
+			color: #7193ff; /* Reddit downvote color */
+		}
+
+		.formatting:hover{
+			color: blue;
+			text-decoration: underline;
+		}
+		.help:hover{
+			color: blue;
+			text-decoration: underline;
+		}
+		
+		.save-button:hover{
+			box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
+			transform: translateY(-1px); /* Slight lift effect */
+		}
+		
+		
+		.actions button {
+			margin-left:10px;
+			background: none;         /* Remove background */
+			border: none;             /* Remove border */
+			padding: 0;               /* Remove padding */
+			font-size: .6rem;          /* Set font size */
+			cursor: pointer;         /* Pointer cursor */
+			font-weight: bold;
+			transition: color 0.3s, text-decoration 0.3s; /* Add smooth transition */
+		}
+		
+		.actions button:hover{
+			text-decoration: underline;
+		}
+		
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="reddit1.png" alt="Reddit Logo">
+        <div class="logo">reddit</div>
+        <img src="reddit2.png" alt="Reddit Logo">
+        <img src="reddit3.png" alt="Reddit Logo">
+        <img src="reddit4.png" alt="Reddit Logo">
+        <img src="reddit5.png" alt="Reddit Logo">
+        <img src="reddit6.png" alt="Reddit Logo">
+        <img src="reddit7.png" alt="Reddit Logo">
+        <img src="reddit8.png" alt="Reddit Logo">
+    </header>
+    <div class="nav-buttons">
+		<div class="tab-box">
+			<span class="user"> <a href="your-profile-link" class="tab-link">7hundredand77</a>, you're back!</span>
+			<span class="user-links">
+				<a href="your-preferences-link" class="tab-link">preferences</a> | 
+				<a href="your-logout-link" class="tab-link">logout?</a> <a class="user"> :( </a>
+			</span>
+		</div>
+		<div class ="nav-buttons-container">
+			<button>what's hot</button>
+			<button>new</button>
+			<button>controversial</button>
+			<button>top</button>
+			<button>saved</button>
+		</div>
+		<div class="personalization">
+			<div class="searchbar"> 
+				<input type="text" class="search-bar" placeholder="Search...">
+				<button>🔎 </button>
+			</div>
+			<button>✉️ 1 New Msg</button>  
+			<button>53,211 Link</button>  
+			<button>4,887 Comment</button>  
+		</div>
+	</div>
+	
+    <div class="main">
+        <div class="sidebar hidden" id="sidebar">
+			<button class="toggle-btn" onclick="toggleSidebar()" id="toggle-btn"> >> </button>
+            <a href="#" class="menu-item">📄 FRONT PAGE</a>
+			<a href="#" class="menu-item">🖼 PICS</a>
+			<a href="#" class="menu-item">🧪 SCIENCE</a>
+			<a href="#" class="menu-item">🖥 TECHNOLOGY</a>
+			<a href="#" class="menu-item">❓ ASK REDDIT</a>
+			<a href="#" class="menu-item">😂 FUNNY</a>
+			<a href="#" class="menu-item">😱 WTF</a>
+			<a href="#" class="menu-item">🔴 IAMA</a>
+			<a href="#" class="menu-item">🌍 WORLD NEWS</a>
+			<a href="#" class="menu-item">📚 TODAYILEARNED</a>
+			<a href="#" class="menu-item">🌐 WORLDNEWS</a>
+			<a href="#" class="menu-item">🎨 WEBDESIGN</a>
+			<a href="#" class="menu-item">🛐 ATHEIST</a>
+			<a href="#" class="menu-item">🔥 FFFFFUUUUUUUU</a>
+			
+			<div class="more">(MORE)</div>
+			<div class="submit-box">
+				<strong><a href="#submit-link" class="submit-link">Submit a link</a></strong>
+				<p class="submit-description">to anything interesting: news article, blog entry, video, picture...</p>
+			</div>
+			<div class="submit-box">
+				<strong><a href="#Create Community" class="submit-link">Create Community</a></strong>
+				<p class="submit-description">...for your LARPing community</p>
+			</div>
+			
+				<img src="news3.jpg" alt="Little Big Planet">
+			
+        </div>
+        <div class="content-wrapper">
+            <div class="left-content">
+				<div class="card">
+					<div class="card-number">1</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-image">
+						<img src="goalkeeper.png" alt="Card Image">
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  What do you call 60 guys watching the superbowl at home? <a href="sourcelink" class="title-source"> (cnn.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 19 hours ago by <a href="profile" class="tab-link"> krispykrackers </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">623 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">2</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">232</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  I am the guy who created this design AMA <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 19 hours ago by <a href="profile" class="tab-link"> 7hundredand77 </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">200 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<div class="card">
+					<div class="card-number">3</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">22</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  Use this chrome addon to block major third parties and search engines from tracking the webpages you go to and searches...  <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3>
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 19 hours ago by <a href="profile" class="tab-link"> krispykrackers </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">200 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">4</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-image">
+						<img src="news2.jpg" alt="Card Image">
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  Thanks, Sally, That blowjob was... SFW <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 11 hours ago by <a href="profile" class="tab-link"> Maiko </a> to <a href="profile" class="tab-link"> gaming </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">22 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">5</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">9215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-image">
+						<img src="news1.jpg" alt="Card Image">
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  As a six-year-old, this was the best book ever <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 112 hours ago by <a href="profile" class="tab-link"> Maiko </a> to <a href="profile" class="tab-link"> gaming </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">6232 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">6</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  Thanks, Sally, That blowjob was... SFW <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 11 hours ago by <a href="profile" class="tab-link"> Maiko </a> to <a href="profile" class="tab-link"> gaming </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">22 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">7</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">9215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  As a six-year-old, this was the best book ever <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 112 hours ago by <a href="profile" class="tab-link"> Maiko </a> to <a href="profile" class="tab-link"> gaming </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">6232 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">8</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-image">
+						<img src="goalkeeper.png" alt="Card Image">
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  What do you call 60 guys watching the superbowl at home? <a href="sourcelink" class="title-source"> (cnn.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 19 hours ago by <a href="profile" class="tab-link"> krispykrackers </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">623 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">9</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">22</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  Use this chrome addon to block major third parties and search engines from tracking the webpages you go to and searches...<a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 19 hours ago by <a href="profile" class="tab-link"> krispykrackers </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">200 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">10</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-image">
+						<img src="news2.jpg" alt="Card Image">
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  Thanks, Sally, That blowjob was... SFW <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 11 hours ago by <a href="profile" class="tab-link"> Maiko </a> to <a href="profile" class="tab-link"> gaming </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">22 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="card">
+					<div class="card-number">11</div>
+					<div class="vote-buttons">
+						<button class="upvote">&#9650;</button>
+						<span class="vote-count">9215</span>
+						<button class="downvote">&#9660;</button>
+					</div>
+					<div class="card-image">
+						<img src="news1.jpg" alt="Card Image">
+					</div>
+					<div class="card-text">
+						<!-- Card Title -->
+						<div class="inline-container">
+						<h3>  As a six-year-old, this was the best book ever <a href="sourcelink" class="title-source"> (i.imgur.com) </a> </h3> 
+						</div>
+						<!-- Submitted On Text -->
+						<p class="submitted-on">submitted 112 hours ago by <a href="profile" class="tab-link"> Maiko </a> to <a href="profile" class="tab-link"> gaming </a> </p>
+						
+						<!-- Button Texts (like Comments and Share) -->
+						<div class="card-buttons">
+							<button class="comment-btn">6232 comments</button>
+							<button class="share-btn">share</button>
+							<button class="save-btn">save</button>
+							<button class="hide-btn">hide</button>
+							<button class="report-btn">report</button>
+						</div>
+					</div>
+				</div>
+				
+				</div>
+            <div class="right-content">
+                <div class="inner-container">
+                    <div class="post_right">
+						<div class="header_post_right">
+							<strong class="title">IAM the guy who created this design AMA</strong> 
+							<span class="source_post_right">(i.imgur.com)</span>
+						</div>
+						<div class="image-link_post_right">
+							<a href="http://img3.imageshack.us/img3/9807/goodlookingnew23.jpg">
+								http://img3.imageshack.us/img3/9807/goodlookingnew23.jpg
+							</a>
+						</div>
+						<div class="post_right_bottom_container">
+							<div class="post_right_bottom_points_container">
+								<div class="points_post_right">
+									<strong>232</strong> <span>points</span> <span>(71% like it)</span>
+								</div>
+								<div class="votes_post_right">
+									<span class="upvotes">390 up votes</span>
+									<span class="downvotes">158 down votes</span>
+								</div>
+							</div>
+							<div class="post_right_bottom_metadata_container">
+								submitted on 01 Feb 2011
+								<div class="post_comments">
+									<div class="post_comment_count">
+										200 comments
+									</div>
+									<div class="post_sort_by">
+										sort by
+									</div>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+                    <div class="triangle"></div>
+                </div>
+                <div class="bottom-container">
+					<div class="comment-wrapper">
+						<div class="comment-box">
+							<textarea placeholder="Write a comment..."></textarea>
+							<button class="save-button">Save</button>
+						</div>
+						<div class="formatting-help"> <a class="formatting"> Formatting </a> <a class="help"> help </a></div>
+						
+						<div class="comment">
+					
+							<div class="comment-content">
+							<div class="comment-header">
+								<div class="vote-section">
+									<button class="vote-button upvote">▲</button>
+									
+									<button class="vote-button downvote">▼</button>
+								</div>
+								<div class="username">UserNumber42</div>
+								
+								<div class="metadata">47 points · 21 hours ago</div>
+							</div>
+							<div class="comment-text">
+								Wow, the first Reddit redesign I've seen that doesn't suck. And I've been on this site for 4 years now (different accounts). Very functional. With wide screen monitors this could be very cool.
+								<br> <br>Only suggestion is to have lower the width of the scores column for each post and the subreddit side bar so there is more room for the content.
+							</div>
+							<div class="actions">
+								<button class="act-perma">permalink </button> · 
+								<button class="act-pare">parent </button>  · 
+								<button class="act-repo">report </button>  ·  
+								<button class="act-rep">reply </button>  ·  
+							</div>
+					
+							<div class="nested">
+								<div class="comment">
+									
+										<div class="comment-content">
+											<div class="comment-header">
+												<div class="vote-section">
+													<button class="vote-button upvote">▲</button>
+													
+													<button class="vote-button downvote">▼</button>
+												</div>
+												<div class="username">ReplyUser</div>
+												<div class="metadata">12 points · 18 hours ago</div>
+											</div>
+											<div class="comment-text">
+												I agree! This design is much better than previous versions.
+											</div>
+											<div class="actions">
+												<button class="act-perma">permalink </button> · 
+												<button class="act-pare">parent </button>  · 
+												<button class="act-repo">report </button>  ·  
+												<button class="act-rep">reply </button>  ·  
+											</div>
+						
+											<div class="nested">
+												<div class="comment">
+													
+													<div class="comment-content">
+														<div class="comment-header">
+															<div class="vote-section">
+																<button class="vote-button upvote">▲</button>
+																
+																<button class="vote-button downvote">▼</button>
+															</div>
+															<div class="username">NestedReplyUser</div>
+															<div class="metadata">5 points · 15 hours ago</div>
+														</div>
+														<div class="comment-text">
+															Agreed! A collapsible sidebar would be great.
+														</div>
+														<div class="actions">
+															<button class="act-perma">permalink </button> · 
+															<button class="act-pare">parent </button>  · 
+															<button class="act-repo">report </button>  ·  
+															<button class="act-rep">reply </button>  ·  
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+						
+									<div class="comment">
+										
+										<div class="comment-content">
+											<div class="comment-header">
+												<div class="vote-section">
+													<button class="vote-button upvote">▲</button>
+													
+													<button class="vote-button downvote">▼</button>
+												</div>
+												<div class="username">AnotherReply</div>
+												<div class="metadata">8 points · 16 hours ago</div>
+											</div>
+											<div class="comment-text">
+												I still think the original layout was better in some ways.
+											</div>
+											<div class="actions">
+												<button class="act-perma">permalink </button> · 
+												<button class="act-pare">parent </button>  · 
+												<button class="act-repo">report </button>  ·  
+												<button class="act-rep">reply </button>  ·  
+											</div>
+						
+											<div class="nested">
+												<div class="comment">
+													
+													<div class="comment-content">
+														<div class="comment-header">
+															<div class="vote-section">
+																<button class="vote-button upvote">▲</button>
+																
+																<button class="vote-button downvote">▼</button>
+															</div>
+															<div class="username">DeepNestedReply</div>
+															<div class="metadata">4 points · 14 hours ago</div>
+														</div>
+														<div class="comment-text">
+															That’s a good point! Customization options would help.
+														</div>
+														<div class="actions">
+															<button class="act-perma">permalink </button> · 
+															<button class="act-pare">parent </button>  · 
+															<button class="act-repo">report </button>  ·  
+															<button class="act-rep">reply </button>  ·  
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+						
+									<div class="comment">
+										
+										<div class="comment-content">
+											<div class="comment-header">
+												<div class="vote-section">
+													<button class="vote-button upvote">▲</button>
+		
+													<button class="vote-button downvote">▼</button>
+												</div>
+												<div class="username">NewCommenter</div>
+												<div class="metadata">6 points · 10 hours ago</div>
+											</div>
+											<div class="comment-text">
+												This thread has some great insights!
+											</div>
+											<div class="actions">
+												<button class="act-perma">permalink </button> · 
+												<button class="act-pare">parent </button>  · 
+												<button class="act-repo">report </button>  ·  
+												<button class="act-rep">reply </button>  ·  
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+
+				</div>
+            </div>
+        </div>
+    </div>
+	
+	
+	<script>
+        function toggleSidebar() {
+			const sidebar = document.getElementById('sidebar');
+			const contentWrapper = document.querySelector('.content-wrapper');
+			const navButtonsContainer = document.querySelector('.nav-buttons-container');
+			const toggleBtn = document.getElementById('toggle-btn');
+
+			sidebar.classList.toggle('hidden');
+			contentWrapper.classList.toggle('shifted');
+			navButtonsContainer.classList.toggle('shifted'); 
+			
+			if (sidebar.classList.contains('hidden')) {
+				toggleBtn.textContent = '>>';
+			} else {
+				toggleBtn.textContent = '<<';
+			}
+		}
+		
+		document.addEventListener("DOMContentLoaded", function () {
+			const buttons = document.querySelectorAll(".nav-buttons-container button");
+
+			buttons.forEach(button => {
+				button.addEventListener("click", function () {
+					// Remove "active" class from all buttons
+					buttons.forEach(btn => btn.classList.remove("active"));
+					
+					// Add "active" class to clicked button
+					this.classList.add("active");
+				});
+			});
+		});
+
+		function updateUserText() {
+			let userText = document.querySelector(".user");
+			let userLinks = document.querySelector(".user-links");
+
+			let fullText = `<a href="your-profile-link" class="tab-link"> 7hundredand77 </a>, you're back!`;
+			let shortText = `<a href="your-profile-link" class="tab-link"> 7hundredand77 </a>`; 
+
+			if (window.innerWidth < 800) {
+				userText.innerHTML = shortText; // Keep the <a> tag
+				userLinks.style.display = "none"; // Hide links
+			} else {
+				userText.innerHTML = fullText; // Restore full text
+				userLinks.style.display = "inline"; // Show links
+			}
+		}
+
+		window.addEventListener("load", updateUserText);
+		window.addEventListener("resize", updateUserText);
+		
+		function togglePersonalization() {
+			let personalization = document.querySelector(".personalization");
+
+			if (window.innerWidth < 900) {
+				personalization.style.display = "none"; // Hide when screen is small
+			} else {
+				personalization.style.display = "flex"; // Show when screen is large
+			}
+		}
+
+		window.addEventListener("load", togglePersonalization);
+		window.addEventListener("resize", togglePersonalization);
+
+		document.addEventListener('DOMContentLoaded', () => {
+			// Select all upvote and downvote buttons
+			const upvoteButtons = document.querySelectorAll('.upvote');
+			const downvoteButtons = document.querySelectorAll('.downvote');
+			
+			// Loop through each set of upvote and downvote buttons
+			upvoteButtons.forEach((upvoteButton, index) => {
+				const downvoteButton = downvoteButtons[index];
+				const voteCountElement = upvoteButton.closest('.vote-buttons').querySelector('.vote-count');
+				let voteCount = parseInt(voteCountElement.textContent);
+				
+				let upvoted = false;
+				let downvoted = false;
+
+				// Upvote button click event
+				upvoteButton.addEventListener('click', () => {
+					if (downvoted) {
+						// If downvote is active, deactivate it and reset its color
+						downvoted = false;
+						downvoteButton.classList.remove('active');
+						voteCount++;  // Revert the vote count change
+						voteCountElement.classList.remove('downvoted');  // Remove downvoted class
+					}
+
+					if (!upvoted) {
+						// Activate upvote and change color
+						upvoted = true;
+						upvoteButton.classList.add('active');
+						voteCount++;  // Increase the vote count
+						voteCountElement.classList.add('upvoted');  // Add upvoted class to change vote count color
+					} else {
+						// Deactivate upvote and reset its color
+						upvoted = false;
+						upvoteButton.classList.remove('active');
+						voteCount--;  // Decrease the vote count
+						voteCountElement.classList.remove('upvoted');  // Remove upvoted class
+					}
+
+					// Update the vote count display
+					voteCountElement.textContent = voteCount;
+				});
+
+				// Downvote button click event
+				downvoteButton.addEventListener('click', () => {
+					if (upvoted) {
+						// If upvote is active, deactivate it and reset its color
+						upvoted = false;
+						upvoteButton.classList.remove('active');
+						voteCount--;  // Revert the vote count change
+						voteCountElement.classList.remove('upvoted');  // Remove upvoted class
+					}
+
+					if (!downvoted) {
+						// Activate downvote and change color
+						downvoted = true;
+						downvoteButton.classList.add('active');
+						voteCount--;  // Decrease the vote count
+						voteCountElement.classList.add('downvoted');  // Add downvoted class to change vote count color
+					} else {
+						// Deactivate downvote and reset its color
+						downvoted = false;
+						downvoteButton.classList.remove('active');
+						voteCount++;  // Increase the vote count
+						voteCountElement.classList.remove('downvoted');  // Remove downvoted class
+					}
+
+					// Update the vote count display
+					voteCountElement.textContent = voteCount;
+				});
+			});
+		});
+
+		document.addEventListener('DOMContentLoaded', () => {
+			// Get all the card titles (h3) in the document
+			const cardTitles = document.querySelectorAll('.inline-container h3');
+			
+			cardTitles.forEach(title => {
+				// Add click event listener for each title
+				title.addEventListener('click', () => {
+					// Get the card that contains the clicked title
+					const card = title.closest('.card');
+					
+					// Remove 'active' class from all cards
+					document.querySelectorAll('.card').forEach(card => {
+						card.classList.remove('active');
+					});
+					
+					// Add 'active' class to the clicked card
+					card.classList.add('active');
+				});
+			});
+		});
+
+		document.addEventListener("DOMContentLoaded", function () {
+			// Select all menu items
+			const menuItems = document.querySelectorAll(".menu-item");
+
+			menuItems.forEach(item => {
+				item.addEventListener("click", function (event) {
+					event.preventDefault(); // Prevent default link behavior
+
+					// Remove active class from all menu items
+					menuItems.forEach(menu => menu.classList.remove("active"));
+
+					// Add active class to the clicked menu item
+					this.classList.add("active");
+				});
+			});
+		});
+
+
+
+    </script>
+</body>
+</html>
